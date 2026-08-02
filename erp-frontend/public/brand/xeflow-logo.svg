@@ -1,0 +1,39 @@
+<svg width="1600" height="680" viewBox="0 0 1600 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>XeFlow XF folded monogram</title>
+  <desc>A dimensional XF monogram built from interlocking folded geometric ribbons.</desc>
+  <defs>
+    <filter id="softShadow" x="-30%" y="-30%" width="180%" height="190%">
+      <feDropShadow dx="0" dy="20" stdDeviation="18" flood-color="#15184A" flood-opacity="0.20"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="680" rx="52" fill="#F7F8FC"/>
+
+  <!-- Interlocked XF monogram -->
+  <g transform="translate(110 110)" filter="url(#softShadow)">
+    <!-- geometric extrusion: the offset face creates depth without gradients -->
+    <path d="M100 34H196L250 129L304 34H400L306 200L400 366H304L250 271L196 366H100L194 200L100 34Z"
+          fill="#272B67" transform="translate(18 22)"/>
+    <!-- X front face -->
+    <path d="M100 34H196L250 129L304 34H400L306 200L400 366H304L250 271L196 366H100L194 200L100 34Z"
+          fill="#6264F4"/>
+    <!-- central fold facets emphasize the X crossing -->
+    <path d="M194 200L250 129L306 200L250 271L194 200Z" fill="#4A4CC4"/>
+    <path d="M250 129L306 200L250 188L194 200L250 129Z" fill="#7E80FF"/>
+
+    <!-- F: shares the X crossing and is cut like a folded foreground ribbon -->
+    <path d="M221 59H371L344 112H278V166H332L304 219H278V322L250 350L221 322V59Z"
+          fill="#202331" transform="translate(10 13)" opacity="0.34"/>
+    <path d="M221 59H371L344 112H278V166H332L304 219H278V322L250 350L221 322V59Z"
+          fill="white"/>
+    <!-- small violet inset makes F and X feel physically interlocked -->
+    <path d="M221 166H278V219H250L221 190V166Z" fill="#6264F4"/>
+    <path d="M278 166H332L304 219H278V166Z" fill="#E8E9FF"/>
+  </g>
+
+  <!-- clean wordmark -->
+  <text x="655" y="387" fill="#171923"
+        font-family="Inter, Avenir Next, Segoe UI, Arial, sans-serif"
+        font-size="216" font-weight="720" letter-spacing="-12">XeFlow</text>
+  <rect x="665" y="432" width="116" height="10" rx="5" fill="#6264F4"/>
+</svg>

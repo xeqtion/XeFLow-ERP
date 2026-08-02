@@ -1,0 +1,195 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: xeflow-backend
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  # SMTP 邮件 (host 为空则不创建 JavaMailSender; 验证码会降级为日志输出, 便于本地无邮箱也能测试)
+  mail:
+    host: ${MAIL_HOST:}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: ${MAIL_SSL:true}
+      mail.smtp.starttls.enable: ${MAIL_STARTTLS:false}
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 5000
+
+# MyBatis-Plus
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: assign_id        # 雪花 ID
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.erp.**.entity
+
+# 业务 / 安全 自定义配置
+erp:
+  company:
+    name: ${ERP_COMPANY_NAME:XeFlow Demo Company}
+    address-line-1: ${ERP_COMPANY_ADDRESS_LINE_1:Configure ERP_COMPANY_ADDRESS_LINE_1}
+    address-line-2: ${ERP_COMPANY_ADDRESS_LINE_2:}
+    website: ${ERP_COMPANY_WEBSITE:https://example.com}
+    contact: ${ERP_COMPANY_CONTACT:Configure ERP_COMPANY_CONTACT}
+    shipping-mark: ${ERP_COMPANY_SHIPPING_MARK:XeFlow}
+    bank:
+      account-name: ${ERP_COMPANY_BANK_ACCOUNT_NAME:}
+      name: ${ERP_COMPANY_BANK_NAME:}
+      account-no: ${ERP_COMPANY_BANK_ACCOUNT_NO:}
+      address: ${ERP_COMPANY_BANK_ADDRESS:}
+      swift-code: ${ERP_COMPANY_BANK_SWIFT_CODE:}
+      currency: ${ERP_COMPANY_BANK_CURRENCY:USD}
+  bootstrap-admin:
+    enabled: ${ERP_BOOTSTRAP_ADMIN_ENABLED:false}
+    password: ${ERP_BOOTSTRAP_ADMIN_PASSWORD:}
+    email: ${ERP_BOOTSTRAP_ADMIN_EMAIL:admin@example.com}
+  jwt:
+    # 生产环境务必通过环境变量覆盖此密钥
+    secret: ${ERP_JWT_SECRET:${random.uuid}${random.uuid}}
+    # 访问令牌有效期(分钟)
+    expire-minutes: 720
+    header: Authorization
+    token-prefix: "Bearer "
+  # 安全: CORS 前端源白名单 + 登录失败锁定
+  security:
+    cors:
+      # 逗号分隔的前端源; 生产务必收敛为真实域名
+      allowed-origins: ${ERP_CORS_ORIGINS:http://localhost:5173,http://127.0.0.1:5173}
+    login:
+      max-attempts: ${ERP_LOGIN_MAX_ATTEMPTS:5}
+      lock-minutes: ${ERP_LOGIN_LOCK_MINUTES:15}
+  # 本位币 (汇率折算的目标币种) + 在线实时汇率
+  currency:
+    base: ${ERP_CURRENCY_BASE:CNY}
+    online:
+      enabled: ${ERP_FX_ONLINE:true}
+      # 数据源: 中国银行外汇牌价(境内直连, 折算到 CNY)
+      boc-url: ${ERP_FX_BOC_URL:https://www.boc.cn/sourcedb/whpj/}
+      # 取中行哪一列: middle(中行折算价) | buy(现汇买入价) | sell(现汇卖出价)
+      boc-rate-type: ${ERP_FX_BOC_RATE:middle}
+      # 出网代理(如 http://127.0.0.1:7897); 留空则自动读 HTTPS_PROXY/HTTP_PROXY 环境变量, 仍无则直连(境内服务器一般直连即可)
+      proxy: ${ERP_FX_PROXY:}
+      timeout-ms: ${ERP_FX_TIMEOUT:8000}
+      currencies: ${ERP_FX_CURRENCIES:USD,EUR,HKD,JPY,GBP,SGD,RUB,TWD}
+      cron: ${ERP_FX_CRON:0 30 8 * * ?}
+  # 资料共享
+  fileshare:
+    dir: ${ERP_FILESHARE_DIR:./uploads/fileshare}
+    max-size-mb: ${ERP_FILESHARE_MAX_MB:50}
+  customer:
+    # 每日检查个人发展客户池：连续六个月无成交且无进行中 PI 时回收到公共客户池。
+    pool-recycle-cron: ${ERP_CUSTOMER_POOL_RECYCLE_CRON:0 15 2 * * ?}
+  # 签约价审核偏差阈值(百分比), 超过则进入审批流
+  contract-price:
+    deviation-threshold: 0.05
+  # 登录态存储: redis(默认, 适合多实例/云端) | memory(本地开发, 无需 Redis)
+  session:
+    store: ${ERP_SESSION_STORE:redis}
+  # 邮件发送开关与发件人; enabled=false 时验证码仅打印到日志(本地无 SMTP 也可走完整流程)
+  mail:
+    enabled: ${ERP_MAIL_ENABLED:false}
+    from: ${ERP_MAIL_FROM:XeFlow <noreply@example.com>}
+    # 是否在"邮件未启用"时把验证码直接回传到接口响应(仅供本地联调!)。
+    # 生产/试运营必须为 false: 否则未配置 SMTP 时验证码会经接口泄露, 邮箱白名单形同虚设。
+    # dev 环境在 application-dev.yml 中显式置 true 保留本地便捷调试。
+    expose-dev-code: ${ERP_MAIL_EXPOSE_CODE:false}
+  # 周报/月报 经营摘要 (定时广播站内信 + 可选邮件)
+  digest:
+    enabled: ${ERP_DIGEST_ENABLED:true}
+    # 周报: 每周一 08:00; 月报: 每月1日 08:00 (Spring cron, 6 段)
+    weekly-cron: ${ERP_DIGEST_WEEKLY_CRON:0 0 8 ? * MON}
+    monthly-cron: ${ERP_DIGEST_MONTHLY_CRON:0 0 8 1 * ?}
+    # 摘要是否同时发邮件 (需 erp.mail.enabled=true 才真正发信)
+    send-email: ${ERP_DIGEST_SEND_EMAIL:true}
+  # 注册限制 (内部系统: 仅公司邮箱可注册 + 邮箱验证码; 新用户默认低权限只读角色)
+  register:
+    enabled: ${ERP_REGISTER_ENABLED:false}
+    # 当前阶段暂不限制邮箱域名 (allowed-domains 留空)。
+    # Restrict registration to your company domain with ERP_REGISTER_DOMAINS when needed.
+    allowed-domains: ${ERP_REGISTER_DOMAINS:}
+    # 旧版全局注册码配置保留用于环境兼容；注册现统一使用用户管理中生成的邀请码。
+    register-code: ${ERP_REGISTER_CODE:}
+    # 是否要求邮箱验证码 (证明邮箱归属); 当前关闭, 切回公司邮箱注册时置 true
+    require-email-code: ${ERP_REGISTER_REQUIRE_EMAIL_CODE:false}
+    # 新用户默认角色 (role_key)
+    default-role: readonly
+    # 新用户是否需管理员审核启用; true 时注册后 status=0 待启用
+    require-approval: ${ERP_REGISTER_APPROVAL:false}
+    # 验证码有效期(分钟) 与 同一邮箱重复发送的冷却(秒)
+    code-ttl-minutes: 10
+    code-cooldown-seconds: 60
+  # Excel 导入导出业务规则
+  dataimport:
+    enabled: ${ERP_DATAIMPORT_ENABLED:false}
+  import:
+    default-currency: USD
+    product-default-currency: CNY
+    batch-size: 1000
+    idempotent-enabled: true
+    idempotent-strategy: overwrite
+    trim-whitespace: true
+    ignore-case: true
+    column-aliases: {}
+
+# 接口文档
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: default
+      paths-to-match: /**
+      packages-to-scan: com.erp
+
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn
+
+# Actuator: 仅暴露健康检查 (供 Docker/负载均衡探活); 不暴露其它管理端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+  health:
+    # Redis 健康检查跟随会话存储开关: 用内存会话(单机)时关闭, 避免无 Redis 时健康检查误报 DOWN。
+    # 多实例/云端用 redis 会话时, 由 docker-compose 保证 redis 先 healthy。
+    redis:
+      enabled: ${ERP_HEALTH_REDIS:true}
+    mail:
+      enabled: false
+
+logging:
+  level:
+    com.erp: debug

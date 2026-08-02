@@ -1,0 +1,74 @@
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background-color: #f0f2f5;
+  color: #303133;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-container {
+  padding: 16px;
+}
+
+/* Keep compact form labels readable: Chinese labels must not wrap one character per line. */
+.el-form-item__label {
+  white-space: nowrap;
+  word-break: keep-all;
+  line-height: 32px;
+}
+
+.el-form-item__content {
+  min-width: 0;
+}
+
+/* 退出登录确认框 (ElMessageBox 经 JS 调用, 样式需全局) */
+.logout-confirm {
+  width: 380px;
+  border-radius: 12px;
+  padding-bottom: 8px;
+}
+
+.logout-confirm .el-message-box__header {
+  padding-top: 18px;
+}
+
+.logout-confirm .el-message-box__title {
+  font-weight: 600;
+}
+
+.logout-confirm__body {
+  text-align: center;
+}
+
+.logout-confirm__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 6px;
+}
+
+.logout-confirm__tip {
+  font-size: 13px;
+  color: #909399;
+  line-height: 1.6;
+}
+
+.logout-confirm .el-message-box__btns {
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.logout-confirm .el-button {
+  min-width: 96px;
+}

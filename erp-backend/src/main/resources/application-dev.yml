@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DB:erp}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 5000
+
+# 本地开发默认用内存会话, 无需启动 Redis; 如本地有 Redis 可设 ERP_SESSION_STORE=redis
+erp:
+  session:
+    store: ${ERP_SESSION_STORE:memory}
+  # 本地开发: 邮件未启用时把验证码回传接口/打印日志, 便于无 SMTP 联调 (生产/试运营保持默认 false)
+  mail:
+    expose-dev-code: ${ERP_MAIL_EXPOSE_CODE:false}
+  # 本地开发: 不限制邮箱域名; 注册码默认留空; 不要求邮箱验证码
+  register:
+    allowed-domains: ${ERP_REGISTER_DOMAINS:}
+    register-code: ${ERP_REGISTER_CODE:}
+    require-email-code: ${ERP_REGISTER_REQUIRE_EMAIL_CODE:false}
+
+# 本地开发默认内存会话、无 Redis -> 关闭 Redis 健康检查, 使 /actuator/health 为 UP
+management:
+  health:
+    redis:
+      enabled: ${ERP_HEALTH_REDIS:false}

@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:mysql}:${MYSQL_PORT:3306}/${MYSQL_DB:erp}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:erp}
+    password: ${MYSQL_PASSWORD:}
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 50
+
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+
+# 生产: 关闭 MyBatis SQL 控制台打印 (StdOutImpl 走 System.out 不受日志级别约束)
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+# 生产: 关闭在线接口文档, 避免暴露接口结构
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+knife4j:
+  enable: false
+  production: true
+
+erp:
+  jwt:
+    # 生产强制通过环境变量提供密钥(无默认值, 缺失则启动失败)
+    secret: ${ERP_JWT_SECRET}
+  security:
+    cors:
+      # 生产必须显式配置允许的前端域名
+      allowed-origins: ${ERP_CORS_ORIGINS:}
+
+logging:
+  level:
+    com.erp: info
+  file:
+    name: /app/logs/erp-backend.log

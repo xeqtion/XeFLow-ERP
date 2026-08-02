@@ -1,0 +1,62 @@
+# ===== 后端 (Java / Maven) =====
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+!**/src/main/resources/**/*.jar
+
+# ===== 前端 (Node / Vite) =====
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+*.tsbuildinfo
+# 防止 TS/Vue 误编译产物 (.js) 混入源码并遮蔽 .ts (源码仅 .ts/.vue)
+erp-frontend/src/**/*.js
+erp-frontend/src/**/*.vue.js
+
+# ===== 环境 / 密钥 =====
+.env
+.env.*
+!.env.example
+!erp-frontend/.env.development
+!erp-frontend/.env.production
+*.env.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*credentials*
+*secrets*
+.codex_pdf_env/
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+
+# ===== 系统 / 日志 =====
+.DS_Store
+Thumbs.db
+*.log
+logs/
+
+# ===== 业务数据文件 / 上传目录 (勿提交) =====
+*.xlsx
+*.xls
+!erp-backend/src/main/resources/templates/excel/pi_ci_po_template.xlsx
+!erp-backend/src/main/resources/templates/shipping-instruction.xlsx
+uploads/
+outputs/
+tmp/
+backups/
+*.sql.gz
+*.dump
