@@ -24,7 +24,7 @@
         <easyexcel.version>3.3.4</easyexcel.version>
         <knife4j.version>4.5.0</knife4j.version>
         <poi-tl.version>1.12.2</poi-tl.version>
-        <hutool.version>5.8.27</hutool.version>
+        <hutool.version>5.8.47</hutool.version>
     </properties>
 
     <dependencies>
