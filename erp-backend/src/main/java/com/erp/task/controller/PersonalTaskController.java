@@ -56,8 +56,8 @@ public class PersonalTaskController {
 
     @Operation(summary = "新建待办")
     @PostMapping
-    public Result<Long> create(@RequestBody PersonalTask task) {
-        return Result.success(service.createTask(task));
+    public Result<String> create(@RequestBody PersonalTask task) {
+        return Result.id(service.createTask(task));
     }
 
     @Operation(summary = "修改待办")

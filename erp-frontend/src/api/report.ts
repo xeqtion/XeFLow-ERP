@@ -1,3 +1,4 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult, downloadFile } from './request'
 
 export interface ReportRow {
@@ -18,7 +19,7 @@ export interface ReportQuery {
   endDate?: string
 }
 export interface SalesmanRow {
-  ownerId?: number
+  ownerId?: EntityId
   salesman: string
   orderCount: number
   totalAmount: number

@@ -74,11 +74,11 @@ public class CurrencyController {
     @OperationLog(module = "汇率管理", operation = "新建汇率")
     @PreAuthorize("@perm.has('currency:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody CurrencyRate rate) {
+    public Result<String> create(@Valid @RequestBody CurrencyRate rate) {
         normalize(rate);
         rate.setId(null);
         currencyService.save(rate);
-        return Result.success(rate.getId());
+        return Result.id(rate.getId());
     }
 
     @Operation(summary = "修改汇率")

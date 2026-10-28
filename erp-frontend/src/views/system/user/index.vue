@@ -20,7 +20,7 @@ import {
 
 const userStore = useUserStore()
 const ADMIN_ID = 1
-const SUPER_ADMIN_ROLE_ID = 0
+const SUPER_ADMIN_ROLE_ID = '0'
 /** id 现以字符串下发(防雪花精度丢失), 比较一律按字符串 */
 const sameId = (a: unknown, b: unknown) => a != null && b != null && String(a) === String(b)
 
@@ -44,7 +44,7 @@ const form = reactive<SysUser>(emptyForm())
 const editingSuperAdmin = computed(() => isEdit.value && sameId(form.id, ADMIN_ID))
 
 const pwdVisible = ref(false)
-const pwdForm = reactive({ userId: 0, username: '', newPassword: '' })
+const pwdForm = reactive({ userId: '' as number | string, username: '', newPassword: '' })
 const pwdFormRef = ref<FormInstance>()
 
 const inviteLoading = ref(false)
@@ -134,7 +134,7 @@ function isProtected(row: SysUser) {
   return sameId(row.id, ADMIN_ID)
 }
 
-function onRoleChange(value: number[]) {
+function onRoleChange(value: Array<number | string>) {
   const admin = roles.value.find((role) => role.roleKey === 'admin')
   if (admin && value.some((id) => sameId(id, admin.id))) {
     form.roleIds = [admin.id!]

@@ -46,8 +46,8 @@ public class ContractPriceController {
     @OperationLog(module = "销售报价", operation = "新建报价")
     @PreAuthorize("@perm.has('contract_price:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody ContractPrice cp) {
-        return Result.success(service.createWithCompare(cp));
+    public Result<String> create(@Valid @RequestBody ContractPrice cp) {
+        return Result.id(service.createWithCompare(cp));
     }
 
     @Operation(summary = "修改 (重新判定审核状态)")

@@ -71,12 +71,12 @@ public class FinanceEntryController {
     @OperationLog(module = "收付款", operation = "新建收付款")
     @PreAuthorize("@perm.has('finance:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody FinanceEntry entry) {
+    public Result<String> create(@Valid @RequestBody FinanceEntry entry) {
         validate(entry);
         entry.setId(null);
         service.fillDirection(entry);
         service.save(entry);
-        return Result.success(entry.getId());
+        return Result.id(entry.getId());
     }
 
     @Operation(summary = "修改")

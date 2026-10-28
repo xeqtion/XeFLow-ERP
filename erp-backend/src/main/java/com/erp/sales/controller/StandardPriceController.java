@@ -48,8 +48,8 @@ public class StandardPriceController {
     @OperationLog(module = "产品报价", operation = "新建报价")
     @PreAuthorize("@perm.has('standard_price:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody StandardPrice entity) {
-        return Result.success(service.saveQuote(entity));
+    public Result<String> create(@Valid @RequestBody StandardPrice entity) {
+        return Result.id(service.saveQuote(entity));
     }
 
     @Operation(summary = "修改")

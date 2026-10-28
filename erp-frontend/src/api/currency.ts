@@ -1,8 +1,9 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult } from './request'
 import type { PageResult } from './system'
 
 export interface CurrencyRate {
-  id?: number
+  id?: EntityId
   currency: string
   currencyName?: string
   rateToBase: number | null
@@ -60,7 +61,7 @@ export function updateCurrency(data: CurrencyRate): Promise<ApiResult<void>> {
   return request.put(BASE, data)
 }
 
-export function deleteCurrency(id: number): Promise<ApiResult<void>> {
+export function deleteCurrency(id: EntityId): Promise<ApiResult<void>> {
   return request.delete(`${BASE}/${id}`)
 }
 

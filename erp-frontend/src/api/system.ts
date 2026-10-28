@@ -1,3 +1,4 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult } from './request'
 
 export interface PageResult<T> {
@@ -8,7 +9,7 @@ export interface PageResult<T> {
 }
 
 export interface SysUser {
-  id?: number
+  id?: EntityId
   username: string
   password?: string
   realName?: string
@@ -18,12 +19,12 @@ export interface SysUser {
   status?: number
   remark?: string
   createTime?: string
-  roleIds?: number[]
+  roleIds?: EntityId[]
   roleNames?: string[]
 }
 
 export interface Role {
-  id?: number
+  id?: EntityId
   roleName: string
   roleKey: string
   status?: number
@@ -43,8 +44,8 @@ export interface InvitationCode {
 }
 
 export interface Permission {
-  id?: number
-  parentId: number
+  id?: EntityId
+  parentId: EntityId
   permName: string
   permKey?: string
   type: string
@@ -57,7 +58,7 @@ export interface Permission {
 }
 
 export interface AuditLog {
-  id: number
+  id: EntityId
   username?: string
   module?: string
   operation?: string
@@ -83,7 +84,7 @@ export function pageUser(params: {
   return request.get(`${USER}/page`, { params })
 }
 
-export function getUser(id: number): Promise<ApiResult<SysUser>> {
+export function getUser(id: EntityId): Promise<ApiResult<SysUser>> {
   return request.get(`${USER}/${id}`)
 }
 
@@ -99,15 +100,15 @@ export function updateUser(data: SysUser): Promise<ApiResult<void>> {
   return request.put(USER, data)
 }
 
-export function deleteUser(id: number): Promise<ApiResult<void>> {
+export function deleteUser(id: EntityId): Promise<ApiResult<void>> {
   return request.delete(`${USER}/${id}`)
 }
 
-export function changeUserStatus(id: number, status: number): Promise<ApiResult<void>> {
+export function changeUserStatus(id: EntityId, status: number): Promise<ApiResult<void>> {
   return request.put(`${USER}/${id}/status`, undefined, { params: { status } })
 }
 
-export function resetPassword(userId: number, newPassword: string): Promise<ApiResult<void>> {
+export function resetPassword(userId: EntityId, newPassword: string): Promise<ApiResult<void>> {
   return request.put(`${USER}/reset-password`, { userId, newPassword })
 }
 
@@ -145,7 +146,7 @@ export function pageRole(params: {
   return request.get('/system/role/page', { params })
 }
 
-export function rolePermissionIds(roleId: number): Promise<ApiResult<number[]>> {
+export function rolePermissionIds(roleId: EntityId): Promise<ApiResult<EntityId[]>> {
   return request.get(`/system/role/${roleId}/permissions`)
 }
 
@@ -157,11 +158,11 @@ export function updateRole(data: Role): Promise<ApiResult<void>> {
   return request.put('/system/role', data)
 }
 
-export function deleteRole(id: number): Promise<ApiResult<void>> {
+export function deleteRole(id: EntityId): Promise<ApiResult<void>> {
   return request.delete(`/system/role/${id}`)
 }
 
-export function assignRolePermissions(roleId: number, permissionIds: number[]): Promise<ApiResult<void>> {
+export function assignRolePermissions(roleId: EntityId, permissionIds: EntityId[]): Promise<ApiResult<void>> {
   return request.put(`/system/role/${roleId}/permissions`, { permissionIds })
 }
 
@@ -177,7 +178,7 @@ export function updatePermission(data: Permission): Promise<ApiResult<void>> {
   return request.put('/system/permission', data)
 }
 
-export function deletePermission(id: number): Promise<ApiResult<void>> {
+export function deletePermission(id: EntityId): Promise<ApiResult<void>> {
   return request.delete(`/system/permission/${id}`)
 }
 

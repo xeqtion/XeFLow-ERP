@@ -55,9 +55,9 @@ public class ProductController {
     @OperationLog(module = "产品资料", operation = "新建产品")
     @PreAuthorize("@perm.has('product:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody Product product) {
+    public Result<String> create(@Valid @RequestBody Product product) {
         productService.createProduct(product);
-        return Result.success(product.getId());
+        return Result.id(product.getId());
     }
 
     @Operation(summary = "修改")

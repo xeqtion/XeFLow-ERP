@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue'
+import { idKey, type EntityId } from '@/utils/identifier'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from 'element-plus'
 import {
   listPermissions,
@@ -22,7 +23,7 @@ const formRef = ref<FormInstance>()
 const form = reactive<Permission>(emptyForm())
 
 function emptyForm(): Permission {
-  return { id: undefined, parentId: 0, permName: '', permKey: '', type: 'C', path: '', component: '', icon: '', sort: 0, status: 1 }
+  return { id: undefined, parentId: '0', permName: '', permKey: '', type: 'C', path: '', component: '', icon: '', sort: 0, status: 1 }
 }
 const rules: FormRules = {
   permName: [{ required: true, message: '请输入名称', trigger: 'blur' }],
@@ -31,7 +32,7 @@ const rules: FormRules = {
 
 // 父级候选: 顶级(0) + 所有 目录/菜单
 const parentOptions = computed(() => {
-  const opts = [{ id: 0, label: '顶级' }]
+  const opts: { id: EntityId; label: string }[] = [{ id: '0', label: '顶级' }]
   flat.value.filter((p) => p.type === 'M' || p.type === 'C').forEach((p) => {
     opts.push({ id: p.id!, label: `${p.permName} (${TYPE_LABEL[p.type]})` })
   })
@@ -39,11 +40,11 @@ const parentOptions = computed(() => {
 })
 
 function buildTree(items: Permission[]): Permission[] {
-  const byId = new Map<number, Permission>()
-  items.forEach((p) => byId.set(p.id!, { ...p, children: [] }))
+  const byId = new Map<string, Permission>()
+  items.forEach((p) => byId.set(idKey(p.id), { ...p, children: [] }))
   const roots: Permission[] = []
   byId.forEach((n) => {
-    const parent = byId.get(n.parentId)
+    const parent = byId.get(idKey(n.parentId))
     if (parent) parent.children!.push(n)
     else roots.push(n)
   })

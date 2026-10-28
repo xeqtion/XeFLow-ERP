@@ -31,6 +31,15 @@ public class Result<T> implements Serializable {
         return new Result<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), data);
     }
 
+    /** Scalar ID responses have no property name for the HTTP identifier serializer. */
+    public static Result<String> id(Long id) {
+        return success(id == null ? null : id.toString());
+    }
+
+    public static Result<String> id(String message, Long id) {
+        return success(message, id == null ? null : id.toString());
+    }
+
     public static <T> Result<T> success(String message, T data) {
         return new Result<>(ResultCode.SUCCESS.getCode(), message, data);
     }

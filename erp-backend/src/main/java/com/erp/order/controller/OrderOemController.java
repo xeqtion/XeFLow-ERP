@@ -76,14 +76,14 @@ public class OrderOemController {
     @OperationLog(module = "OEM要求", operation = "新建OEM")
     @PreAuthorize("@perm.has('order_oem:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody OrderOem entity) {
+    public Result<String> create(@Valid @RequestBody OrderOem entity) {
         entity.setId(null);
         entity.setOemNo(nextOemNo());
         if (!StringUtils.hasText(entity.getStatus())) {
             entity.setStatus("DRAFT");
         }
         service.save(entity);
-        return Result.success(entity.getId());
+        return Result.id(entity.getId());
     }
 
     @Operation(summary = "修改")

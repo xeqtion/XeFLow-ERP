@@ -1,3 +1,4 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult } from './request'
 
 export interface LoginParams {
@@ -48,8 +49,8 @@ export interface UserInfo {
 }
 
 export interface MenuNode {
-  id: number
-  parentId: number
+  id: EntityId
+  parentId: EntityId
   name: string
   permKey?: string
   path?: string

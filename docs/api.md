@@ -37,6 +37,15 @@ Authorization: Bearer <token>
 
 ## Unified Response
 
+Database identifiers are JSON **strings**, even for built-in values such as `"0"` and `"1"`.
+This applies to `id`, fields ending in `Id`/`Ids`, `createBy`, `updateBy`, and the `data`
+returned by create/generate endpoints. Keep them as strings when selecting, comparing,
+building URLs or posting forms; never pass IDs through `Number()`, `parseInt()` or arithmetic.
+An ID such as `"2112086874144161794"` is larger than JavaScript's safe integer limit.
+Use `idKey()`/`sameId()` from `src/utils/identifier.ts` when comparing legacy numeric literals.
+Request binding still accepts numeric ID literals for older clients, but large IDs must be
+sent as strings. Amounts, quantities, pagination values and statistics remain numeric.
+
 Most JSON endpoints return:
 
 ```json

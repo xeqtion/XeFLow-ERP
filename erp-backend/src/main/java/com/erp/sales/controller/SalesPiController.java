@@ -67,8 +67,8 @@ public class SalesPiController {
     @OperationLog(module = "销售合同PI", operation = "新建PI")
     @PreAuthorize("@perm.has('sales_pi:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody SalesPiDTO dto) {
-        return Result.success(service.savePi(dto));
+    public Result<String> create(@Valid @RequestBody SalesPiDTO dto) {
+        return Result.id(service.savePi(dto));
     }
 
     @Operation(summary = "修改")
@@ -102,10 +102,10 @@ public class SalesPiController {
     @OperationLog(module = "销售合同PI", operation = "PI生成出货")
     @PreAuthorize("@perm.has('sales_pi:update')")
     @PostMapping("/{id}/ship")
-    public Result<Long> ship(@PathVariable Long id,
+    public Result<String> ship(@PathVariable Long id,
                              @RequestParam(required = false) BigDecimal qty,
                              @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate shipDate) {
-        return Result.success("已生成出货单", service.generateShipment(id, qty, shipDate));
+        return Result.id("已生成出货单", service.generateShipment(id, qty, shipDate));
     }
 
     @Operation(summary = "生成 PI 形式发票 (Excel 模板)")

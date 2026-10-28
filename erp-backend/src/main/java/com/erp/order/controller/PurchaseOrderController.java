@@ -68,8 +68,8 @@ public class PurchaseOrderController {
     @OperationLog(module = "PO采购订单", operation = "新建PO")
     @PreAuthorize("@perm.has('purchase_order:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody PurchaseOrderDTO dto) {
-        return Result.success(service.savePo(dto));
+    public Result<String> create(@Valid @RequestBody PurchaseOrderDTO dto) {
+        return Result.id(service.savePo(dto));
     }
 
     @Operation(summary = "修改")

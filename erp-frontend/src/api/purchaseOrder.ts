@@ -1,10 +1,11 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult, downloadFile } from './request'
 import type { PageResult } from './customer'
 
 export interface PurchaseOrderItem {
-  id?: number
-  poId?: number
-  productId?: number
+  id?: EntityId
+  poId?: EntityId
+  productId?: EntityId
   prodCode?: string
   productName?: string
   qty?: number

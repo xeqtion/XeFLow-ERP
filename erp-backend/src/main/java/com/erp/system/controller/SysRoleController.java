@@ -48,8 +48,8 @@ public class SysRoleController {
     @Operation(summary = "角色已分配的权限ID")
     @PreAuthorize("@perm.has('system:role:list')")
     @GetMapping("/{id}/permissions")
-    public Result<List<Long>> permissions(@PathVariable Long id) {
-        return Result.success(roleService.permissionIds(id));
+    public Result<List<String>> permissions(@PathVariable Long id) {
+        return Result.success(roleService.permissionIds(id).stream().map(String::valueOf).toList());
     }
 
     @Operation(summary = "新建角色")

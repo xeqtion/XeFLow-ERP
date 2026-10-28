@@ -1,8 +1,9 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult, downloadFile } from './request'
 import type { PageResult, ImportResult } from './customer'
 
 export interface FinanceEntry {
-  id?: number
+  id?: EntityId
   entryNo?: string
   type: string
   direction?: string
@@ -60,7 +61,7 @@ export function createFinance(data: FinanceEntry): Promise<ApiResult<number>> {
 export function updateFinance(data: FinanceEntry): Promise<ApiResult<void>> {
   return request.put(BASE, data)
 }
-export function deleteFinance(id: number): Promise<ApiResult<void>> {
+export function deleteFinance(id: EntityId): Promise<ApiResult<void>> {
   return request.delete(`${BASE}/${id}`)
 }
 export function importFinance(file: File): Promise<ApiResult<ImportResult>> {

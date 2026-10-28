@@ -1,9 +1,10 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult } from './request'
 import type { PageResult } from './system'
 
 export interface Notification {
-  id: number
-  recipientId: number
+  id: EntityId
+  recipientId: EntityId
   title: string
   content?: string
   type: string
@@ -25,7 +26,7 @@ export function unreadCount(): Promise<ApiResult<{ count: number }>> {
   return request.get('/notification/unread-count')
 }
 
-export function markRead(id: number): Promise<ApiResult<void>> {
+export function markRead(id: EntityId): Promise<ApiResult<void>> {
   return request.put(`/notification/${id}/read`)
 }
 

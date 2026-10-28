@@ -1,8 +1,9 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult } from './request'
 
 export interface PersonalTask {
-  id?: number
-  ownerId?: number
+  id?: EntityId
+  ownerId?: EntityId
   title: string
   content?: string
   taskDate?: string
@@ -51,10 +52,10 @@ export function updateTask(data: PersonalTask): Promise<ApiResult<void>> {
   return request.put(BASE, data)
 }
 
-export function toggleTask(id: number): Promise<ApiResult<void>> {
+export function toggleTask(id: EntityId): Promise<ApiResult<void>> {
   return request.put(`${BASE}/${id}/toggle`)
 }
 
-export function deleteTask(id: number): Promise<ApiResult<void>> {
+export function deleteTask(id: EntityId): Promise<ApiResult<void>> {
   return request.delete(`${BASE}/${id}`)
 }

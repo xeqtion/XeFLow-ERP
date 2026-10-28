@@ -1,8 +1,9 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult, downloadFile } from './request'
 import type { PageResult } from './system'
 
 export interface Contact {
-  userId: number
+  userId: EntityId
   name: string
   username: string
   realName?: string
@@ -15,17 +16,17 @@ export interface Contact {
 }
 
 export interface MessageAttachment {
-  id: number
+  id: EntityId
   fileName: string
   contentType?: string
   size?: number
 }
 
 export interface UserMessage {
-  id: number
-  senderId: number
+  id: EntityId
+  senderId: EntityId
   senderName: string
-  recipientId: number
+  recipientId: EntityId
   recipientName: string
   content?: string
   isRead: number
@@ -40,11 +41,11 @@ export function listContacts(): Promise<ApiResult<Contact[]>> {
   return request.get(`${BASE}/contacts`)
 }
 
-export function getContact(userId: number): Promise<ApiResult<Contact>> {
+export function getContact(userId: EntityId): Promise<ApiResult<Contact>> {
   return request.get(`${BASE}/contacts/${userId}`)
 }
 
-export function getConversation(userId: number): Promise<ApiResult<UserMessage[]>> {
+export function getConversation(userId: EntityId): Promise<ApiResult<UserMessage[]>> {
   return request.get(`${BASE}/conversation/${userId}`)
 }
 
@@ -61,7 +62,7 @@ export function messageUnreadCount(): Promise<ApiResult<{ count: number }>> {
 }
 
 /** 发送消息(可带附件) */
-export function sendMessage(recipientId: number, content: string, files: File[]): Promise<ApiResult<UserMessage>> {
+export function sendMessage(recipientId: EntityId, content: string, files: File[]): Promise<ApiResult<UserMessage>> {
   const form = new FormData()
   form.append('recipientId', String(recipientId))
   if (content) form.append('content', content)
@@ -69,18 +70,18 @@ export function sendMessage(recipientId: number, content: string, files: File[])
   return request.post(`${BASE}/send`, form)
 }
 
-export function markMessageRead(id: number): Promise<ApiResult<void>> {
+export function markMessageRead(id: EntityId): Promise<ApiResult<void>> {
   return request.put(`${BASE}/${id}/read`)
 }
 
-export function deleteMessage(id: number): Promise<ApiResult<void>> {
+export function deleteMessage(id: EntityId): Promise<ApiResult<void>> {
   return request.delete(`${BASE}/${id}`)
 }
 
-export function clearConversation(userId: number): Promise<ApiResult<void>> {
+export function clearConversation(userId: EntityId): Promise<ApiResult<void>> {
   return request.delete(`${BASE}/conversation/${userId}`)
 }
 
-export function downloadAttachment(id: number, fileName: string): Promise<void> {
+export function downloadAttachment(id: EntityId, fileName: string): Promise<void> {
   return downloadFile(`${BASE}/attachment/${id}/download`, fileName)
 }

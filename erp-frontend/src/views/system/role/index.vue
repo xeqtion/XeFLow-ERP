@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, ref } from 'vue'
+import { idKey, type EntityId } from '@/utils/identifier'
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules, type ElTree } from 'element-plus'
 import {
   pageRole,
@@ -13,8 +14,8 @@ import {
   type Permission
 } from '@/api/system'
 
-const SUPER_ADMIN_ROLE_ID = 0
-const ADMIN_ROLE_ID = 1
+const SUPER_ADMIN_ROLE_ID = '0'
+const ADMIN_ROLE_ID = '1'
 const loading = ref(false)
 const list = ref<Role[]>([])
 const total = ref(0)
@@ -60,8 +61,8 @@ function openEdit(row: Role) {
   dialogVisible.value = true
   formRef.value?.clearValidate()
 }
-function isBuiltinAdminRole(row: Role | { id?: number }) {
-  return row.id === SUPER_ADMIN_ROLE_ID || row.id === ADMIN_ROLE_ID
+function isBuiltinAdminRole(row: Role) {
+  return idKey(row.id) === SUPER_ADMIN_ROLE_ID || idKey(row.id) === ADMIN_ROLE_ID
 }
 async function submitForm() {
   if (!formRef.value) return
@@ -93,11 +94,11 @@ const treeProps = { label: 'permName', children: 'children' }
 const assigningRole = ref<Role | null>(null)
 
 function buildTree(flat: Permission[]): Permission[] {
-  const byId = new Map<number, Permission>()
-  flat.forEach((p) => byId.set(p.id!, { ...p, children: [] }))
+  const byId = new Map<string, Permission>()
+  flat.forEach((p) => byId.set(idKey(p.id), { ...p, children: [] }))
   const roots: Permission[] = []
   byId.forEach((n) => {
-    const parent = byId.get(n.parentId)
+    const parent = byId.get(idKey(n.parentId))
     if (parent) parent.children!.push(n)
     else roots.push(n)
   })
@@ -118,15 +119,15 @@ async function openAssign(row: Role) {
   permTree.value?.setCheckedKeys(leafIds, false)
 }
 
-function leafCheckedIds(all: Permission[], checked: number[]): number[] {
-  const hasChild = new Set(all.map((p) => p.parentId))
-  return checked.filter((id) => !hasChild.has(id))
+function leafCheckedIds(all: Permission[], checked: EntityId[]): EntityId[] {
+  const hasChild = new Set(all.map((p) => idKey(p.parentId)))
+  return checked.filter((id) => !hasChild.has(idKey(id)))
 }
 
 async function submitAssign() {
   if (!assigningRole.value || !permTree.value) return
-  const checked = permTree.value.getCheckedKeys(false) as number[]
-  const half = permTree.value.getHalfCheckedKeys() as number[]
+  const checked = permTree.value.getCheckedKeys(false) as EntityId[]
+  const half = permTree.value.getHalfCheckedKeys() as EntityId[]
   await assignRolePermissions(assigningRole.value.id!, [...checked, ...half])
   ElMessage.success('权限已保存')
   permVisible.value = false

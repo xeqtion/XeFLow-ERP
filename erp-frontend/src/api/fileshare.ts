@@ -1,8 +1,9 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult, downloadFile } from './request'
 import type { PageResult } from './system'
 
 export interface SharedFile {
-  id: number
+  id: EntityId
   fileName: string
   contentType?: string
   fileFormat?: string
@@ -33,10 +34,10 @@ export function uploadFile(file: File, category?: string, remark?: string, expir
   return request.post(`${BASE}/upload`, form)
 }
 
-export function downloadSharedFile(id: number, fileName: string): Promise<void> {
+export function downloadSharedFile(id: EntityId, fileName: string): Promise<void> {
   return downloadFile(`${BASE}/${id}/download`, fileName)
 }
 
-export function deleteFile(id: number): Promise<ApiResult<void>> {
+export function deleteFile(id: EntityId): Promise<ApiResult<void>> {
   return request.delete(`${BASE}/${id}`)
 }

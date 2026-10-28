@@ -55,8 +55,8 @@ public class BomController {
     @OperationLog(module = "产品配件资料", operation = "新建配件")
     @PreAuthorize("@perm.has('bom:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody Bom bom) {
-        return Result.success(bomService.saveBom(bom));
+    public Result<String> create(@Valid @RequestBody Bom bom) {
+        return Result.id(bomService.saveBom(bom));
     }
 
     @Operation(summary = "修改")

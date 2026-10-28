@@ -58,13 +58,13 @@ public class ShippingInstructionController {
     @OperationLog(module = "出货指示", operation = "新建出货指示")
     @PreAuthorize("@perm.has('shipping_instruction:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody ShippingInstruction entity) {
+    public Result<String> create(@Valid @RequestBody ShippingInstruction entity) {
         if (StringUtils.hasText(entity.getSiNo())) {
             checkNoUnique(entity.getSiNo(), null);
         }
         entity.setId(null);
         service.save(entity);
-        return Result.success(entity.getId());
+        return Result.id(entity.getId());
     }
 
     @Operation(summary = "修改")

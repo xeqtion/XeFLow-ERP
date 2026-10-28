@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { sameId, type EntityId } from '@/utils/identifier'
 import { ElMessage, ElMessageBox, type UploadUserFile } from 'element-plus'
 import { Delete, Download, InfoFilled, Paperclip, Promotion, Search, Share } from '@element-plus/icons-vue'
 import NotificationPanel from '@/components/NotificationPanel.vue'
@@ -31,7 +32,7 @@ watch(
 
 const contacts = ref<Contact[]>([])
 const keyword = ref('')
-const activeId = ref<number | null>(null)
+const activeId = ref<EntityId | null>(null)
 const messages = ref<UserMessage[]>([])
 const loadingMsg = ref(false)
 const sending = ref(false)
@@ -44,7 +45,7 @@ const detailVisible = ref(false)
 const contactDetail = ref<Contact | null>(null)
 
 const chatUnread = computed(() => contacts.value.reduce((sum, c) => sum + (c.unread || 0), 0))
-const activeContact = computed(() => contacts.value.find((c) => c.userId === activeId.value) || null)
+const activeContact = computed(() => contacts.value.find((c) => sameId(c.userId, activeId.value)) || null)
 const filteredContacts = computed(() => {
   const k = keyword.value.trim().toLowerCase()
   if (!k) return contacts.value
@@ -155,7 +156,7 @@ function onShareDone() {
   if (activeId.value != null) loadConversation()
 }
 
-function onDownload(attId: number, fileName: string) {
+function onDownload(attId: EntityId, fileName: string) {
   downloadAttachment(attId, fileName)
 }
 
@@ -224,7 +225,7 @@ onBeforeUnmount(() => {
                 v-for="c in filteredContacts"
                 :key="c.userId"
                 class="contact"
-                :class="{ active: c.userId === activeId }"
+                :class="{ active: sameId(c.userId, activeId) }"
                 @click="selectContact(c)"
               >
                 <el-badge :value="c.unread" :hidden="c.unread === 0" :max="99" class="avatar-badge">

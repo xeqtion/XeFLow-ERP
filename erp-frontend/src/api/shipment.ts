@@ -30,7 +30,10 @@ export function createShipment(data: Shipment): Promise<ApiResult<number | strin
   return request.post(BASE, data)
 }
 export function updateShipment(data: Shipment): Promise<ApiResult<void>> {
-  return request.put(BASE, data)
+  const { id, shipDate, qty, packageCount, grossWeight, netWeight,
+    volumeCbm, containerType, containerNo, blNo, remark } = data
+  return request.put(BASE, { id, shipDate, qty, packageCount, grossWeight,
+    netWeight, volumeCbm, containerType, containerNo, blNo, remark })
 }
 export function deleteShipment(id: number | string): Promise<ApiResult<void>> {
   return request.delete(`${BASE}/${id}`)

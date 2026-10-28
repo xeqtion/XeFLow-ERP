@@ -205,13 +205,13 @@ async function submitForm() {
 }
 
 async function onToggle(t: PersonalTask) {
-  await toggleTask(t.id as number)
+  await toggleTask(t.id!)
   reloadAll()
 }
 
 async function onDelete(t: PersonalTask) {
   await ElMessageBox.confirm(`确认删除日程「${t.title}」？`, '提示', { type: 'warning' })
-  await deleteTask(t.id as number)
+  await deleteTask(t.id!)
   ElMessage.success('已删除')
   reloadAll()
 }

@@ -78,9 +78,9 @@ public class CustomerController {
     @OperationLog(module = "客户资料", operation = "新建客户")
     @PreAuthorize("@perm.has('customer:create')")
     @PostMapping
-    public Result<Long> create(@Valid @RequestBody Customer customer) {
+    public Result<String> create(@Valid @RequestBody Customer customer) {
         customerService.createCustomer(customer);
-        return Result.success(customer.getId());
+        return Result.id(customer.getId());
     }
 
     @Operation(summary = "修改")

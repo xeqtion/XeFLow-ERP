@@ -90,17 +90,26 @@ public class ShipmentServiceImpl extends ServiceImpl<ShipmentMapper, Shipment> i
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateById(Shipment entity) {
-        if (entity != null) {
-            Shipment existing = super.getById(entity.getId());
-            assertVisible(existing);
-            if (existing != null) {
-                entity.setCreateBy(existing.getCreateBy());
-                validateStatusTransition(existing.getStatus(), entity.getStatus());
-            }
-            resolvePiReference(entity);
-            validateReferences(entity);
+        if (entity == null || entity.getId() == null) {
+            throw new BusinessException("缺少 id");
         }
+        Shipment existing = super.getById(entity.getId());
+        if (existing == null) {
+            throw new BusinessException("出货单不存在");
+        }
+        assertVisible(existing);
+        validateStatusTransition(existing.getStatus(), entity.getStatus());
+        // Generated relationships are immutable; cached clients may submit rounded IDs.
+        entity.setPiId(existing.getPiId());
+        entity.setSiId(existing.getSiId());
+        entity.setShipmentNo(existing.getShipmentNo());
+        entity.setStatus(existing.getStatus());
+        entity.setCreateBy(existing.getCreateBy());
+        entity.setCreateTime(existing.getCreateTime());
+        resolvePiReference(entity);
+        validateReferences(entity);
         boolean updated = super.updateById(entity);
         if (updated) {
             Shipment current = super.getById(entity.getId());

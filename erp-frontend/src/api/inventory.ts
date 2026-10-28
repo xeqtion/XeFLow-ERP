@@ -1,3 +1,4 @@
+import type { EntityId } from '@/utils/identifier'
 import request, { type ApiResult } from './request'
 import type { PageResult } from './system'
 
@@ -12,7 +13,7 @@ export interface StockRow {
 }
 
 export interface StockMovement {
-  id: number
+  id: EntityId
   prodCode: string
   direction: 'IN' | 'OUT'
   qty: number

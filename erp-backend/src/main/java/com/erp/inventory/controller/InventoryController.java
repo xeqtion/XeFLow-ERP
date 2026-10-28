@@ -67,13 +67,13 @@ public class InventoryController {
     @OperationLog(module = "库存管理", operation = "出入库登记")
     @PreAuthorize("@perm.has('inventory:manage')")
     @PostMapping("/movement")
-    public Result<Long> record(@RequestParam String prodCode,
+    public Result<String> record(@RequestParam String prodCode,
                                @RequestParam String direction,
                                @RequestParam BigDecimal qty,
                                @RequestParam(required = false) String bizType,
                                @RequestParam(required = false) String relatedDocNo,
                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate moveDate,
                                @RequestParam(required = false) String remark) {
-        return Result.success("登记成功", stockService.recordMovement(prodCode, direction, qty, bizType, relatedDocNo, moveDate, remark));
+        return Result.id("登记成功", stockService.recordMovement(prodCode, direction, qty, bizType, relatedDocNo, moveDate, remark));
     }
 }
