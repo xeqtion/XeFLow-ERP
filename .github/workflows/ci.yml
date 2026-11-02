@@ -9,6 +9,26 @@ permissions:
   contents: read
 
 jobs:
+  database:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          # Disposable CI-only service; no published host port or real data.
+          MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test soft-delete unique keys on MySQL 8
+        env:
+          MYSQL_CONTAINER: ${{ job.services.mysql.id }}
+        run: python3 tools/test_soft_delete_uniqueness.py -- docker exec -i "$MYSQL_CONTAINER" mysql -uroot
+
   backend:
     runs-on: ubuntu-latest
     defaults:

@@ -70,3 +70,55 @@ docker compose logs -f backend
 - Container status: `docker compose ps`
 - Backend logs: `docker compose logs -f backend`
 - Frontend logs: `docker compose logs -f frontend`
+
+## 2026-11-02: User/Role Soft-Delete Unique-Key Patch
+
+Existing installations must explicitly apply `sql/52_soft_delete_unique_keys.sql`.
+Docker init scripts run only for a new MySQL volume: `git pull` and a container
+rebuild do not update an existing database. New installations get the fixed schema
+automatically. This patch needs no application rebuild/restart and does not delete,
+rename or disable accounts or change role assignments/permissions.
+
+Back up the database and save `SHOW CREATE TABLE sys_user` and
+`SHOW CREATE TABLE sys_role` before applying the patch. From the repository root:
+
+```bash
+docker compose exec -T mysql sh -c \
+  'export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"; exec mysql --default-character-set=utf8mb4 -uroot "${MYSQL_DATABASE:-erp}"' \
+  < sql/52_soft_delete_unique_keys.sql
+```
+
+The migration uses a 10-second metadata lock timeout and is safe to run again.
+If a long-running transaction blocks it, retry after that transaction finishes.
+Each unique index is replaced atomically, retaining uniqueness for active records.
+
+To verify the deployed schema without changing real accounts, run the 14 checks
+on session-local temporary tables. Every result line must start with `PASS`:
+
+```bash
+docker compose exec -T mysql sh -c \
+  'export MYSQL_PWD="$MYSQL_ROOT_PASSWORD"; exec mysql --default-character-set=utf8mb4 --batch --raw --skip-column-names -uroot "${MYSQL_DATABASE:-erp}"' \
+  < tests/sql/soft_delete_uniqueness.sql
+```
+
+For the complete isolated migration suite used in CI (old bug reproduction,
+data preservation, repeat execution and fresh installations), use Python 3 and
+a MySQL 8 client with credentials in `MYSQL_PWD` or its client configuration:
+
+```bash
+python3 tools/test_soft_delete_uniqueness.py -- mysql -u root
+```
+
+This runner creates and then removes only its own randomly named test database.
+It can also use a Docker MySQL client; see the script's `--help` output.
+
+The generated `active_unique` marker is `0` for undeleted rows and `NULL` for
+deleted rows. MySQL unique indexes allow multiple NULL values, so deleted history
+can repeat while undeleted usernames/role keys remain unique. Disabled records
+still reserve their names, and original column collations are retained. See the
+[MySQL generated-column index documentation](https://dev.mysql.com/doc/refman/8.0/en/create-table-secondary-indexes.html).
+
+Rollback is usually unnecessary because the old application remains compatible.
+Do not blindly restore the old indexes: after several same-name history rows
+exist, `(username, deleted)` / `(role_key, deleted)` cannot be made unique again.
+Keep the backup and use an approved recovery plan if rollback is essential.

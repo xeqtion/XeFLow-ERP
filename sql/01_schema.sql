@@ -30,8 +30,9 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
   `update_by`   BIGINT                DEFAULT NULL,
   `update_time` DATETIME              DEFAULT NULL,
   `deleted`     TINYINT      NOT NULL DEFAULT 0 COMMENT '逻辑删除 0正常 1删除',
+  `active_unique` TINYINT GENERATED ALWAYS AS (CASE WHEN `deleted` = 0 THEN 0 ELSE NULL END) VIRTUAL COMMENT '仅未删除记录参与唯一约束',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_username` (`username`, `deleted`)
+  UNIQUE KEY `uk_username` (`username`, `active_unique`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='系统用户';
 
 CREATE TABLE IF NOT EXISTS `sys_role` (
@@ -46,8 +47,9 @@ CREATE TABLE IF NOT EXISTS `sys_role` (
   `update_by`   BIGINT                DEFAULT NULL,
   `update_time` DATETIME              DEFAULT NULL,
   `deleted`     TINYINT      NOT NULL DEFAULT 0,
+  `active_unique` TINYINT GENERATED ALWAYS AS (CASE WHEN `deleted` = 0 THEN 0 ELSE NULL END) VIRTUAL COMMENT '仅未删除记录参与唯一约束',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_role_key` (`role_key`, `deleted`)
+  UNIQUE KEY `uk_role_key` (`role_key`, `active_unique`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='角色';
 
 CREATE TABLE IF NOT EXISTS `sys_permission` (
